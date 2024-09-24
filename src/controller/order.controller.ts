@@ -8,7 +8,8 @@ export class OrderController {
       const response = await this.service.createOrder(data);
       return response;
     } catch (e: any) {
-      throw new Error("Not Found");
+      console.error("Error in createOrder:", e.message, e.stack);
+      throw new Error(`Error in createOrder: ${e.message}`);
     }
   };
 
@@ -31,11 +32,31 @@ export class OrderController {
   getOrdersAnalytics = async (instructorId: string) => {
     try {
       console.log("Order InstuctorId: ", instructorId);
-      
+
       return this.service.getOrdersAnalytics(instructorId);
     } catch (e: any) {
       console.log(e);
     }
   };
 
+  getRevenueAnalytics = async (instructorId?: string) => {
+    try {
+      
+      return await this.service.getRevenueAnalytics(instructorId);
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
+
+  getTotalInstructorRevenueByCourse = async (courseId: string) => {
+    try {
+      const totalRevenue = await this.service.getTotalInstructorRevenueByCourse(
+        courseId
+      );
+      console.log(totalRevenue);
+      return { courseId, totalInstructorRevenue: totalRevenue };
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
 }

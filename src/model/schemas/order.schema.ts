@@ -5,6 +5,8 @@ export interface IOrder extends Document {
   courseId: string;
   userId: string;
   payment_info: object;
+  instructorRevenue: Number;
+  adminRevenue: Number;
 }
 
 const orderSchema: Schema<IOrder> = new Schema(
@@ -19,6 +21,14 @@ const orderSchema: Schema<IOrder> = new Schema(
     },
     payment_info: {
       type: Object,
+    },
+    instructorRevenue: {
+      type: Number,
+      required: true,
+    },
+    adminRevenue: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true }

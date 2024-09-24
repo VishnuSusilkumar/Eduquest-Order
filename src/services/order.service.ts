@@ -48,11 +48,32 @@ export class OrderService implements IOrderService {
     }
   }
 
-  createOrder(data: any) {
+  async createOrder(data: any) {
     try {
-      return this.repository.createOrder(data);
+      const { amount } = data.payment_info;
+      const totalAmount = Number(amount) / 100;
+
+      if (isNaN(totalAmount)) {
+        throw new Error("Invalid totalAmount provided");
+      }
+
+      const instructorRevenue = totalAmount * 0.9;
+      const adminRevenue = totalAmount * 0.1;
+
+      if (isNaN(instructorRevenue) || isNaN(adminRevenue)) {
+        throw new Error("Calculated revenue values are invalid");
+      }
+
+      const orderData = {
+        ...data,
+        instructorRevenue,
+        adminRevenue,
+      };
+
+      return await this.repository.createOrder(orderData);
     } catch (e: any) {
-      throw new Error("Not Found");
+      console.error("Error in createOrder service:", e.message, e.stack);
+      throw new Error(`Error in createOrder service: ${e.message}`);
     }
   }
 
@@ -83,5 +104,26 @@ export class OrderService implements IOrderService {
     }));
 
     return output;
+  }
+
+  async getRevenueAnalytics(instructorId?: string): Promise<Object[]> {
+    try {
+      return this.repository.getRevenueAnalytics(instructorId);
+    } catch (e: any) {
+      throw new Error("Service Error in fetching revenue analytics");
+    }
+  }
+
+  async getTotalInstructorRevenueByCourse(courseId: string): Promise<any> {
+    try {
+      const totalRevenue =
+        await this.repository.getTotalInstructorRevenueByCourse(courseId);
+      return totalRevenue;
+    } catch (e: any) {
+      console.log(
+        "Service Error in fetching total instructor revenue:",
+        e.message
+      );
+    }
   }
 }

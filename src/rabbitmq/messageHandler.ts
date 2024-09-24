@@ -34,12 +34,23 @@ export default class MessageHandler {
         response = await controller.getOrdersAnalytics.bind(controller)(data);
         break;
 
+      case "revenue-analytics":
+        response = await controller.getRevenueAnalytics.bind(controller)(
+          data.instructorId || null
+        );
+        break;
+
+      case "instructor-revenue-analytics":
+        response = await controller.getTotalInstructorRevenueByCourse.bind(
+          controller
+        )(data.courseId);
+        break;
+
       default:
         response = "Request-key notfound";
         break;
     }
 
-    //Produce the response back to the client
     await rabbitClient.produce(response, correlationId, replyTo);
   }
 }
